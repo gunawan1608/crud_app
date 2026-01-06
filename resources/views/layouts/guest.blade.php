@@ -9,21 +9,42 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <style>
+            body {
+                font-family: 'Inter', sans-serif;
+            }
+        </style>
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
+    <body class="bg-gray-50 antialiased">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-4">
+            <!-- Logo & Brand -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-xl mb-4 shadow-lg">
+                    <span class="text-3xl">📁</span>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-1">
+                    Sistem Manajemen Arsip Digital
+                </h1>
+                <p class="text-sm text-gray-600">
+                    Masuk untuk mengelola arsip divisi Anda
+                </p>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <!-- Card Container -->
+            <div class="w-full sm:max-w-md bg-white shadow-md rounded-lg p-8">
                 {{ $slot }}
+            </div>
+
+            <!-- Footer Link -->
+            <div class="mt-6 text-center">
+                <a href="{{ url('/') }}" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                    ← Kembali ke Beranda
+                </a>
             </div>
         </div>
     </body>
