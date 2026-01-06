@@ -47,7 +47,9 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Total Arsip</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">
+                                {{ \App\Models\Arsip::where('divisi_id', auth()->user()->divisi_id)->count() }}
+                            </p>
                         </div>
                         <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                             <span class="text-2xl">📄</span>
@@ -61,7 +63,12 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Bulan Ini</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">
+                                {{ \App\Models\Arsip::where('divisi_id', auth()->user()->divisi_id)
+                                    ->whereMonth('created_at', date('m'))
+                                    ->whereYear('created_at', date('Y'))
+                                    ->count() }}
+                            </p>
                         </div>
                         <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                             <span class="text-2xl">📊</span>
@@ -70,93 +77,150 @@
                     <p class="text-xs text-gray-500 mt-3">Dokumen ditambahkan bulan ini</p>
                 </div>
 
-                <!-- Card 3: Kategori -->
+                <!-- Card 3: Arsip Saya -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-gray-600">Kategori</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
+                            <p class="text-sm font-medium text-gray-600">Arsip Saya</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">
+                                {{ \App\Models\Arsip::where('user_id', auth()->id())->count() }}
+                            </p>
                         </div>
                         <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <span class="text-2xl">🗂️</span>
+                            <span class="text-2xl">👤</span>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-500 mt-3">Kategori arsip tersedia</p>
+                    <p class="text-xs text-gray-500 mt-3">Dokumen yang saya upload</p>
                 </div>
             </div>
 
-            <!-- Main Content Area -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Manajemen Arsip Digital</h3>
-                        <p class="text-sm text-gray-600 mt-1">Kelola dokumen dan arsip divisi Anda di sini</p>
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <a href="{{ route('arsip.create') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition group">
+                        <div class="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center justify-center mr-4 transition">
+                            <span class="text-2xl">➕</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Tambah Arsip</h4>
+                            <p class="text-sm text-gray-600">Upload dokumen baru</p>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('arsip.index') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition group">
+                        <div class="w-12 h-12 bg-green-100 group-hover:bg-green-200 rounded-lg flex items-center justify-center mr-4 transition">
+                            <span class="text-2xl">📋</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Lihat Arsip</h4>
+                            <p class="text-sm text-gray-600">Daftar semua arsip</p>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('arsip.index') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition group">
+                        <div class="w-12 h-12 bg-purple-100 group-hover:bg-purple-200 rounded-lg flex items-center justify-center mr-4 transition">
+                            <span class="text-2xl">🔍</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Cari Arsip</h4>
+                            <p class="text-sm text-gray-600">Temukan dokumen</p>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('arsip.index') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition group">
+                        <div class="w-12 h-12 bg-orange-100 group-hover:bg-orange-200 rounded-lg flex items-center justify-center mr-4 transition">
+                            <span class="text-2xl">📊</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Lihat Statistik</h4>
+                            <p class="text-sm text-gray-600">Laporan arsip</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Arsip Terbaru -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Arsip Terbaru</h3>
+                        <a href="{{ route('arsip.index') }}" class="text-sm text-blue-600 hover:text-blue-700">
+                            Lihat Semua →
+                        </a>
                     </div>
-                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-                        + Tambah Arsip
-                    </button>
+                    <div class="space-y-3">
+                        @forelse(\App\Models\Arsip::where('divisi_id', auth()->user()->divisi_id)->latest()->take(5)->get() as $arsip)
+                            <a href="{{ route('arsip.show', $arsip) }}" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                                <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                                        {{ strtoupper($arsip->file_type) }}
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-medium text-gray-900 truncate">{{ $arsip->judul }}</p>
+                                        <p class="text-xs text-gray-500">{{ $arsip->created_at->diffForHumans() }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-gray-400 flex-shrink-0 ml-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </span>
+                            </a>
+                        @empty
+                            <div class="text-center py-8">
+                                <span class="text-4xl mb-2 block">📄</span>
+                                <p class="text-gray-500 text-sm">Belum ada arsip</p>
+                                <a href="{{ route('arsip.create') }}" class="text-blue-600 text-sm hover:underline mt-2 inline-block">
+                                    Tambah arsip pertama
+                                </a>
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
 
-                <!-- Placeholder untuk CRUD -->
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-12">
-                    <div class="text-center">
-                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                            <span class="text-3xl">🚧</span>
+                <!-- Informasi Divisi -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Divisi</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-600">Nama Divisi</span>
+                            <span class="font-medium text-gray-900">{{ auth()->user()->divisi->nama_divisi }}</span>
                         </div>
-                        <h4 class="text-lg font-semibold text-gray-900 mb-2">Area CRUD Arsip</h4>
-                        <p class="text-gray-600 max-w-md mx-auto">
-                            Bagian ini akan diisi dengan tabel data arsip, form tambah/edit, dan fungsi hapus.
-                            Sesuaikan dengan kebutuhan manajemen arsip digital divisi Anda.
-                        </p>
-                        <div class="mt-6 space-y-2">
-                            <p class="text-sm text-gray-500">Fitur yang akan ditambahkan:</p>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li>✓ Tabel list arsip dengan pagination</li>
-                                <li>✓ Form upload/tambah arsip baru</li>
-                                <li>✓ Edit detail arsip</li>
-                                <li>✓ Hapus arsip</li>
-                                <li>✓ Filter & pencarian arsip</li>
-                                <li>✓ Download/preview dokumen</li>
-                            </ul>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-600">Total Anggota</span>
+                            <span class="font-medium text-gray-900">
+                                {{ \App\Models\User::where('divisi_id', auth()->user()->divisi_id)->count() }} orang
+                            </span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions (Optional) -->
-                <div class="mt-6 pt-6 border-t border-gray-200">
-                    <h4 class="text-sm font-semibold text-gray-700 mb-3">Quick Actions</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <button class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-left">
-                            <span class="text-xl mb-1 block">📤</span>
-                            <span class="text-sm font-medium text-gray-700">Upload Dokumen</span>
-                        </button>
-                        <button class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-left">
-                            <span class="text-xl mb-1 block">🔍</span>
-                            <span class="text-sm font-medium text-gray-700">Cari Arsip</span>
-                        </button>
-                        <button class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-left">
-                            <span class="text-xl mb-1 block">📋</span>
-                            <span class="text-sm font-medium text-gray-700">Kategori</span>
-                        </button>
-                        <button class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-left">
-                            <span class="text-xl mb-1 block">📊</span>
-                            <span class="text-sm font-medium text-gray-700">Laporan</span>
-                        </button>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-600">Total Arsip</span>
+                            <span class="font-medium text-gray-900">
+                                {{ \App\Models\Arsip::where('divisi_id', auth()->user()->divisi_id)->count() }} dokumen
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-600">Role Anda</span>
+                            <span class="px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-700">
+                                {{ ucfirst(auth()->user()->role->name) }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tips Card (Optional) -->
+            <!-- Tips Card -->
             <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
                 <div class="flex items-start space-x-3">
                     <span class="text-2xl">💡</span>
                     <div>
-                        <h4 class="font-semibold text-blue-900 mb-1">Tips Penggunaan</h4>
+                        <h4 class="font-semibold text-blue-900 mb-2">Tips Penggunaan</h4>
                         <ul class="text-sm text-blue-800 space-y-1">
                             <li>• Gunakan nama file yang deskriptif untuk memudahkan pencarian</li>
-                            <li>• Pilih kategori yang sesuai saat mengunggah dokumen</li>
-                            <li>• Pastikan ukuran file tidak melebihi batas maksimal</li>
-                            <li>• Backup arsip penting secara berkala</li>
+                            <li>• Semua anggota divisi {{ auth()->user()->divisi->nama_divisi }} dapat melihat dan mengelola arsip</li>
+                            <li>• Pastikan ukuran file tidak melebihi 5MB</li>
+                            <li>• Format file yang didukung: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG</li>
                         </ul>
                     </div>
                 </div>
