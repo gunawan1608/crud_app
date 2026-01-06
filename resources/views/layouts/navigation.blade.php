@@ -27,6 +27,9 @@
                             <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                                 {{ __('Users') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('admin.arsip.index')" :active="request()->routeIs('admin.arsip.*')">
+                                {{ __('Arsip') }}
+                            </x-nav-link>
                         @else
                             <x-nav-link :href="route('arsip.index')" :active="request()->routeIs('arsip.*')">
                                 {{ __('Arsip') }}
@@ -105,6 +108,9 @@
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                         {{ __('Users') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.arsip.index')" :active="request()->routeIs('admin.arsip.*')">
+                        {{ __('Arsip') }}
                     </x-responsive-nav-link>
                 @else
                     <x-responsive-nav-link :href="route('arsip.index')" :active="request()->routeIs('arsip.*')">

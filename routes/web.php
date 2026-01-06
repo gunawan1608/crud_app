@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminArsipController;
 use App\Http\Controllers\Admin\DivisiController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\ArsipController;
@@ -29,6 +30,12 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
     Route::resource('divisi', DivisiController::class);
     Route::resource('users', UserController::class);
+
+    // Admin Arsip Routes
+    Route::get('arsip', [AdminArsipController::class, 'index'])->name('admin.arsip.index');
+    Route::get('arsip/{arsip}', [AdminArsipController::class, 'show'])->name('admin.arsip.show');
+    Route::get('arsip/{arsip}/download', [AdminArsipController::class, 'download'])->name('admin.arsip.download');
+    Route::delete('arsip/{arsip}', [AdminArsipController::class, 'destroy'])->name('admin.arsip.destroy');
 });
 
 // User Routes

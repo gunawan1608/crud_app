@@ -78,7 +78,9 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Total Arsip</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">
+                                {{ \App\Models\Arsip::count() }}
+                            </p>
                         </div>
                         <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                             <span class="text-2xl">📄</span>
@@ -92,7 +94,9 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Bulan Ini</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">
+                                {{ \App\Models\Arsip::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->count() }}
+                            </p>
                         </div>
                         <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                             <span class="text-2xl">📊</span>
@@ -105,7 +109,7 @@
             <!-- Quick Actions -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <a href="{{ route('users.create') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition group">
                         <div class="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center justify-center mr-4 transition">
                             <span class="text-2xl">➕</span>
@@ -126,19 +130,29 @@
                         </div>
                     </a>
 
-                    <a href="#" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition group">
+                    <a href="{{ route('admin.arsip.index') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition group">
                         <div class="w-12 h-12 bg-purple-100 group-hover:bg-purple-200 rounded-lg flex items-center justify-center mr-4 transition">
+                            <span class="text-2xl">📄</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Lihat Arsip</h4>
+                            <p class="text-sm text-gray-600">Semua arsip sistem</p>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('users.index') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition group">
+                        <div class="w-12 h-12 bg-orange-100 group-hover:bg-orange-200 rounded-lg flex items-center justify-center mr-4 transition">
                             <span class="text-2xl">📊</span>
                         </div>
                         <div>
-                            <h4 class="font-semibold text-gray-900">Lihat Laporan</h4>
-                            <p class="text-sm text-gray-600">Statistik sistem</p>
+                            <h4 class="font-semibold text-gray-900">Kelola User</h4>
+                            <p class="text-sm text-gray-600">Manajemen pengguna</p>
                         </div>
                     </a>
                 </div>
             </div>
 
-            <!-- Recent Activity & System Info -->
+            <!-- Recent Activity & Arsip Terbaru -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Recent Users -->
                 <div class="bg-white rounded-lg shadow-md p-6">
@@ -172,28 +186,30 @@
                     </div>
                 </div>
 
-                <!-- System Info -->
+                <!-- Arsip Terbaru -->
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Sistem</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm text-gray-600">Laravel Version</span>
-                            <span class="font-medium text-gray-900">{{ app()->version() }}</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm text-gray-600">PHP Version</span>
-                            <span class="font-medium text-gray-900">{{ PHP_VERSION }}</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm text-gray-600">Environment</span>
-                            <span class="px-2 py-1 text-xs font-medium rounded {{ app()->environment('production') ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
-                                {{ strtoupper(app()->environment()) }}
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm text-gray-600">Database</span>
-                            <span class="font-medium text-gray-900">{{ config('database.default') }}</span>
-                        </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Arsip Terbaru</h3>
+                        <a href="{{ route('admin.arsip.index') }}" class="text-sm text-blue-600 hover:text-blue-700">
+                            Lihat Semua →
+                        </a>
+                    </div>
+                    <div class="space-y-3">
+                        @forelse(\App\Models\Arsip::with(['divisi', 'user'])->latest()->take(5)->get() as $arsip)
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                                <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                                        {{ strtoupper($arsip->file_type) }}
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-medium text-gray-900 truncate">{{ $arsip->judul }}</p>
+                                        <p class="text-xs text-gray-500">{{ $arsip->divisi->nama_divisi }} • {{ $arsip->created_at->diffForHumans() }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-center text-gray-500 py-4">Belum ada arsip</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -207,8 +223,8 @@
                         <ul class="text-sm text-blue-800 space-y-1">
                             <li>• Pastikan setiap user memiliki divisi yang sesuai untuk akses arsip</li>
                             <li>• Review dan kelola user secara berkala untuk keamanan sistem</li>
+                            <li>• Monitor arsip yang diupload oleh setiap divisi</li>
                             <li>• Backup database secara rutin untuk mencegah kehilangan data</li>
-                            <li>• Monitor aktivitas user untuk deteksi dini masalah</li>
                         </ul>
                     </div>
                 </div>

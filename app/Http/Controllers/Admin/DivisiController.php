@@ -35,7 +35,8 @@ class DivisiController extends Controller
         ]);
 
         Divisi::create([
-            'nama_divisi' => $request->nama_divisi
+            'nama_divisi' => $request->nama_divisi,
+            'color' => Divisi::generateRandomColor()
         ]);
 
         return redirect()->route('divisi.index')
