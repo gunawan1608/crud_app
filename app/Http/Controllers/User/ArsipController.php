@@ -196,15 +196,15 @@ class ArsipController extends Controller
      */
     public function download(Arsip $arsip)
     {
-        // Cek apakah arsip ini milik divisi user
         if ($arsip->divisi_id !== auth()->user()->divisi_id) {
             abort(403, 'Anda tidak memiliki akses ke arsip ini');
         }
 
         if (!Storage::disk('public')->exists($arsip->file_path)) {
-            return redirect()->back()->with('error', 'File tidak ditemukan');
+            return back()->with('error', 'File tidak ditemukan');
         }
 
-        return Storage::download('public/' . $arsip->file_path, $arsip->file_name);
+        return Storage::disk('public')
+            ->download($arsip->file_path, $arsip->file_name);
     }
 }
