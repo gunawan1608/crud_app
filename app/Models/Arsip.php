@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Arsip extends Model
 {
@@ -11,6 +12,7 @@ class Arsip extends Model
         'nomor_arsip',
         'judul',
         'keterangan',
+        'kategori',  // TAMBAHKAN INI (untuk dropdown kategori)
         'file_path',
         'file_name',
         'file_type',
@@ -41,11 +43,12 @@ class Arsip extends Model
     }
 
     /**
-     * Helper untuk format ukuran file dalam satuan yang mudah dibaca
+     * FIX: Helper untuk format ukuran file dalam satuan yang mudah dibaca
+     * Dipakai lewat: $arsip->file_size_formatted
      */
     public function getFileSizeFormattedAttribute(): string
     {
-        $bytes = $this->file_size;
+        $bytes = $this->getFileSizeBytesAttribute();
 
         if ($bytes >= 1048576) { // >= 1 MB
             return number_format($bytes / 1048576, 2) . ' MB';
@@ -54,6 +57,26 @@ class Arsip extends Model
         }
 
         return $bytes . ' bytes';
+    }
+
+    /**
+     * FIX: Get file size in bytes - perbaiki path storage
+     * Dipakai lewat: $arsip->file_size_bytes
+     */
+    public function getFileSizeBytesAttribute(): int
+    {
+        // Prioritas 1: Gunakan file_size dari database (lebih cepat)
+        if (!empty($this->attributes['file_size'])) {
+            return (int) $this->attributes['file_size'];
+        }
+
+        // Prioritas 2: Hitung dari storage
+        // FIX: Tanpa prefix 'public/' karena sudah pakai disk('public')
+        if (!empty($this->file_path) && Storage::disk('public')->exists($this->file_path)) {
+            return Storage::disk('public')->size($this->file_path);
+        }
+
+        return 0;
     }
 
     /**

@@ -49,4 +49,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('arsip/{arsip}/download', [ArsipController::class, 'download'])->name('arsip.download');
 });
 
+// routes/web.php
+Route::get('/debug-upload', function () {
+    return [
+        'upload_max_filesize' => ini_get('upload_max_filesize'),
+        'post_max_size'       => ini_get('post_max_size'),
+    ];
+});
+
 require __DIR__ . '/auth.php';
