@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class IsAdmin
+class IsUser
 {
     /**
      * Handle an incoming request.
@@ -15,12 +15,12 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-         if (!auth()->check()) {
+        if (!auth()->check()) {
             return redirect('/login');
         }
 
-        if (auth()->user()->role->name !== 'admin') {
-            abort(403, 'Akses ditolak Khusus admin.');
+        if (auth()->user()->role->name !== 'user') {
+            abort(403, 'Akses ditolak khusus user.');
         }
 
         return $next($request);

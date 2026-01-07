@@ -39,17 +39,16 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
 });
 
 // User Routes
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'is_user'])->group(function () {
     Route::get('/user/dashboard', function () {
         return view('user.dashboard');
     });
 
-    // Arsip Routes untuk User
     Route::resource('arsip', ArsipController::class);
-    Route::get('arsip/{arsip}/download', [ArsipController::class, 'download'])->name('arsip.download');
+    Route::get('arsip/{arsip}/download', [ArsipController::class, 'download'])
+        ->name('arsip.download');
 });
 
-// routes/web.php
 Route::get('/debug-upload', function () {
     return [
         'upload_max_filesize' => ini_get('upload_max_filesize'),
