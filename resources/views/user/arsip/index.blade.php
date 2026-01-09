@@ -76,6 +76,207 @@
                 </div>
             </div>
 
+            <!-- Search & Filter Section -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+                <form method="GET" action="{{ route('arsip.index') }}" class="space-y-4">
+                    <!-- Search Bar -->
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <!-- Search Input -->
+                        <div class="flex-1">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    placeholder="Cari berdasarkan judul, nomor arsip, atau keterangan..."
+                                    class="pl-10 w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <!-- Filter Button (Mobile Toggle) -->
+                        <button type="button"
+                            onclick="document.getElementById('advancedFilters').classList.toggle('hidden')"
+                            class="md:hidden inline-flex items-center justify-center px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
+                            Filter
+                        </button>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-2">
+                            <button type="submit"
+                                class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition shadow-sm">
+                                <span class="hidden md:inline">Cari</span>
+                                <svg class="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </button>
+
+                            @if (request()->hasAny(['search', 'kategori', 'tanggal_dari', 'tanggal_sampai', 'file_type']))
+                                <a href="{{ route('arsip.index') }}"
+                                    class="px-4 py-2.5 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Advanced Filters -->
+                    <div id="advancedFilters" class="hidden md:block pt-4 border-t border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <!-- Kategori Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                                <select name="kategori"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Semua Kategori</option>
+                                    <option value="Surat Masuk"
+                                        {{ request('kategori') == 'Surat Masuk' ? 'selected' : '' }}>Surat Masuk
+                                    </option>
+                                    <option value="Surat Keluar"
+                                        {{ request('kategori') == 'Surat Keluar' ? 'selected' : '' }}>Surat Keluar
+                                    </option>
+                                    <option value="Laporan" {{ request('kategori') == 'Laporan' ? 'selected' : '' }}>
+                                        Laporan</option>
+                                    <option value="Notulen" {{ request('kategori') == 'Notulen' ? 'selected' : '' }}>
+                                        Notulen</option>
+                                    <option value="Proposal"
+                                        {{ request('kategori') == 'Proposal' ? 'selected' : '' }}>Proposal</option>
+                                    <option value="Lainnya" {{ request('kategori') == 'Lainnya' ? 'selected' : '' }}>
+                                        Lainnya</option>
+                                </select>
+                            </div>
+
+                            <!-- File Type Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipe File</label>
+                                <select name="file_type"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Semua Tipe</option>
+                                    @if (isset($fileTypes) && $fileTypes->count() > 0)
+                                        @foreach ($fileTypes as $type)
+                                            <option value="{{ $type }}"
+                                                {{ request('file_type') == $type ? 'selected' : '' }}>
+                                                {{ strtoupper($type) }}
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        <option disabled>Tidak ada file</option>
+                                    @endif
+                                </select>
+                            </div>
+
+                            <!-- Tanggal Dari -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Dari</label>
+                                <input type="date" name="tanggal_dari" value="{{ request('tanggal_dari') }}"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            <!-- Tanggal Sampai -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Sampai</label>
+                                <input type="date" name="tanggal_sampai" value="{{ request('tanggal_sampai') }}"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Filters Display -->
+                    @if (request()->hasAny(['search', 'kategori', 'tanggal_dari', 'tanggal_sampai', 'file_type']))
+                        <div class="flex items-center gap-2 pt-4 border-t border-gray-200">
+                            <span class="text-sm font-medium text-gray-700">Filter Aktif:</span>
+                            <div class="flex flex-wrap gap-2">
+                                @if (request('search'))
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                                        Search: "{{ request('search') }}"
+                                        <a href="{{ route('arsip.index', request()->except('search')) }}"
+                                            class="ml-2 text-blue-600 hover:text-blue-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </span>
+                                @endif
+
+                                @if (request('kategori'))
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 bg-purple-100 text-purple-800 text-sm rounded-full">
+                                        Kategori: {{ request('kategori') }}
+                                        <a href="{{ route('arsip.index', request()->except('kategori')) }}"
+                                            class="ml-2 text-purple-600 hover:text-purple-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </span>
+                                @endif
+
+                                @if (request('file_type'))
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
+                                        Tipe: {{ strtoupper(request('file_type')) }}
+                                        <a href="{{ route('arsip.index', request()->except('file_type')) }}"
+                                            class="ml-2 text-green-600 hover:text-green-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </span>
+                                @endif
+
+                                @if (request('tanggal_dari') || request('tanggal_sampai'))
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 bg-orange-100 text-orange-800 text-sm rounded-full">
+                                        Tanggal:
+                                        {{ request('tanggal_dari') ? \Carbon\Carbon::parse(request('tanggal_dari'))->format('d/m/Y') : '...' }}
+                                        -
+                                        {{ request('tanggal_sampai') ? \Carbon\Carbon::parse(request('tanggal_sampai'))->format('d/m/Y') : '...' }}
+                                        <a href="{{ route('arsip.index', request()->except(['tanggal_dari', 'tanggal_sampai'])) }}"
+                                            class="ml-2 text-orange-600 hover:text-orange-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                </form>
+            </div>
+
+            <!-- Hasil Pencarian Info -->
+            @if (request()->hasAny(['search', 'kategori', 'tanggal_dari', 'tanggal_sampai', 'file_type']))
+                <div class="mb-4 px-6 py-3 bg-blue-50 border-l-4 border-blue-500 rounded-r">
+                    <p class="text-sm text-blue-800">
+                        <strong>{{ $arsips->total() }}</strong> arsip ditemukan
+                        @if (request('search'))
+                            untuk pencarian <strong>"{{ request('search') }}"</strong>
+                        @endif
+                    </p>
+                </div>
+            @endif
+
             <!-- Card Container -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <!-- Table Header -->
@@ -134,8 +335,8 @@
                                         <div class="flex items-start">
                                             <div
                                                 class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-                                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
+                                                <svg class="w-5 h-5 text-blue-600" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2"
                                                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

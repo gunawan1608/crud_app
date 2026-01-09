@@ -11,74 +11,66 @@ use Illuminate\Support\Str;
 
 class ArsipController extends Controller
 {
-    public function index()
-    {
-        $arsips = Arsip::where('divisi_id', auth()->user()->divisi_id)
-            ->latest()
-            ->paginate(10);
-
-        return view('user.arsip.index', compact('arsips'));
-    }
 
     public function create()
     {
         return view('user.arsip.create');
     }
 
-public function store(Request $request)
-{
-    $user = auth()->user();
+    public function store(Request $request)
+    {
+        $user = auth()->user();
 
-    if (!$user->divisi_id) {
-        return redirect()->back()->with('error', 'Anda belum terdaftar dalam divisi manapun.');
-    }
-
-    // FIX: Validasi dengan ukuran lebih besar
-    $request->validate([
-        'nomor_arsip' => 'required|unique:arsips,nomor_arsip',
-        'judul' => 'required|max:255',
-        'keterangan' => 'nullable',
-        'kategori' => 'required|in:Surat Masuk,Surat Keluar,Laporan,Notulen,Proposal,Lainnya',
-        'tanggal_arsip' => 'required|date',
-        // FIX: Tingkatkan max size ke 10MB (10240 KB)
-        'file' => 'required|file|mimes:pdf,docx,xlsx|max:10240',
-    ], [
-        'file.mimes' => 'File harus berformat PDF, DOCX, atau XLSX.',
-        'file.max' => 'Ukuran file tidak boleh lebih dari 10MB.',
-    ]);
-
-    // Upload file
-    if ($request->hasFile('file')) {
-        $file = $request->file('file');
-        $fileName = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-
-        // FIX: Pastikan direktori ada
-        if (!Storage::disk('public')->exists('arsip')) {
-            Storage::disk('public')->makeDirectory('arsip');
+        if (!$user->divisi_id) {
+            return redirect()->back()->with('error', 'Anda belum terdaftar dalam divisi manapun.');
         }
 
-        $filePath = $file->storeAs('arsip', $fileName, 'public');
-
-        Arsip::create([
-            'nomor_arsip' => $request->nomor_arsip,
-            'judul' => $request->judul,
-            'keterangan' => $request->keterangan,
-            'kategori' => $request->kategori,
-            'tanggal_arsip' => $request->tanggal_arsip,
-            'file_path' => $filePath,
-            'file_name' => $file->getClientOriginalName(),
-            'file_type' => $file->getClientOriginalExtension(),
-            'file_size' => $file->getSize(),
-            'divisi_id' => $user->divisi_id,
-            'user_id' => $user->id,
+        // FIX: Validasi dengan ukuran lebih besar
+        $request->validate([
+            'nomor_arsip' => 'required|unique:arsips,nomor_arsip',
+            'judul' => 'required|max:255',
+            'keterangan' => 'nullable',
+            'kategori' => 'required|in:Surat Masuk,Surat Keluar,Laporan,Notulen,Proposal,Lainnya',
+            'tanggal_arsip' => 'required|date',
+            // FIX: Tingkatkan max size ke 10MB (10240 KB)
+            'file' => 'required|file|mimes:pdf,docx,xlsx|max:10240',
+        ], [
+            'file.mimes' => 'File harus berformat PDF, DOCX, atau XLSX.',
+            'file.max' => 'Ukuran file tidak boleh lebih dari 10MB.',
         ]);
 
-        return redirect()->route('arsip.index')
-            ->with('success', 'Arsip berhasil ditambahkan');
-    }
+        // Upload file
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
 
-    return redirect()->back()->with('error', 'Gagal mengupload file');
-}
+            // FIX: Pastikan direktori ada
+            if (!Storage::disk('public')->exists('arsip')) {
+                Storage::disk('public')->makeDirectory('arsip');
+            }
+
+            $filePath = $file->storeAs('arsip', $fileName, 'public');
+
+            Arsip::create([
+                'nomor_arsip' => $request->nomor_arsip,
+                'judul' => $request->judul,
+                'keterangan' => $request->keterangan,
+                'kategori' => $request->kategori,
+                'tanggal_arsip' => $request->tanggal_arsip,
+                'file_path' => $filePath,
+                'file_name' => $file->getClientOriginalName(),
+                'file_type' => $file->getClientOriginalExtension(),
+                'file_size' => $file->getSize(),
+                'divisi_id' => $user->divisi_id,
+                'user_id' => $user->id,
+            ]);
+
+            return redirect()->route('arsip.index')
+                ->with('success', 'Arsip berhasil ditambahkan');
+        }
+
+        return redirect()->back()->with('error', 'Gagal mengupload file');
+    }
 
 
     public function show(Arsip $arsip)
@@ -155,7 +147,6 @@ public function store(Request $request)
             $arsip->update($data);
 
             return redirect()->route('arsip.index')->with('success', 'Arsip berhasil diperbarui!');
-
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
@@ -177,7 +168,6 @@ public function store(Request $request)
             $arsip->delete();
 
             return redirect()->route('arsip.index')->with('success', 'Arsip berhasil dihapus!');
-
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
@@ -197,5 +187,56 @@ public function store(Request $request)
         }
 
         return response()->download($filePath, $arsip->file_name);
+    }
+
+    public function index(Request $request)
+    {
+        $query = Arsip::where('divisi_id', auth()->user()->divisi_id);
+
+        // Search by judul, nomor_arsip, atau keterangan
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
+                    ->orWhere('nomor_arsip', 'like', "%{$search}%")
+                    ->orWhere('keterangan', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by kategori
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
+        }
+
+        // Filter by date range
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate('tanggal_arsip', '>=', $request->tanggal_dari);
+        }
+
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal_arsip', '<=', $request->tanggal_sampai);
+        }
+
+        // Filter by file type
+        if ($request->filled('file_type')) {
+            $query->where('file_type', $request->file_type);
+        }
+
+        $arsips = $query->latest()->paginate(10);
+
+        // Get unique categories for filter dropdown
+        $categories = Arsip::where('divisi_id', auth()->user()->divisi_id)
+            ->distinct()
+            ->pluck('kategori');
+
+        // Get unique file types yang BENAR-BENAR ada
+        $fileTypes = Arsip::where('divisi_id', auth()->user()->divisi_id)
+            ->select('file_type')
+            ->distinct()
+            ->orderBy('file_type')
+            ->pluck('file_type')
+            ->filter(); // Remove null/empty values
+
+        return view('user.arsip.index', compact('arsips', 'categories', 'fileTypes'));
     }
 }
