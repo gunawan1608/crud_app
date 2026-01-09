@@ -14,9 +14,44 @@
         <!-- Tailwind CSS -->
         <script src="https://cdn.tailwindcss.com"></script>
 
+        <!-- Toastr CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
         <style>
             body {
                 font-family: 'Inter', sans-serif;
+            }
+
+            /* Custom Toastr Styling */
+            .toast {
+                font-family: 'Inter', sans-serif !important;
+                border-radius: 0.75rem !important;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+            }
+
+            .toast-success {
+                background-color: #10b981 !important;
+            }
+
+            .toast-error {
+                background-color: #ef4444 !important;
+            }
+
+            .toast-info {
+                background-color: #3b82f6 !important;
+            }
+
+            .toast-warning {
+                background-color: #f59e0b !important;
+            }
+
+            .toast-message {
+                font-size: 0.875rem;
+            }
+
+            .toast-title {
+                font-weight: 600;
+                font-size: 0.9375rem;
             }
         </style>
     </head>
@@ -47,5 +82,14 @@
                 </a>
             </div>
         </div>
+
+        <!-- jQuery (required for Toastr) -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- Toastr JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+        <!-- Toast Notification Component -->
+        <x-toast />
     </body>
 </html>

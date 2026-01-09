@@ -235,7 +235,7 @@
                                 <div class="flex-1">
                                     <p class="text-sm font-medium text-gray-900">{{ basename($arsip->file_path) }}</p>
                                     <p class="text-xs text-gray-500">
-                                        @php    
+                                        @php
                                             $extension = pathinfo($arsip->file_path, PATHINFO_EXTENSION);
                                             // FIX: Gunakan disk 'public' dengan path yang benar
                                             $fileSize = Storage::disk('public')->exists($arsip->file_path)

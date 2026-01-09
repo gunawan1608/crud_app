@@ -17,9 +17,9 @@ class AdminArsipController extends Controller
         // Filter berdasarkan search
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('judul', 'like', "%{$search}%")
-                  ->orWhere('nomor_arsip', 'like', "%{$search}%");
+                    ->orWhere('nomor_arsip', 'like', "%{$search}%");
             });
         }
 
@@ -50,8 +50,10 @@ class AdminArsipController extends Controller
 
             $arsip->delete();
 
-            return redirect()->route('admin.arsip.index')->with('success', 'Arsip berhasil dihapus!');
-
+            // Method destroy
+            return redirect()->route('admin.arsip.index')
+                ->with('success', 'Arsip berhasil dihapus!');
+                    
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }

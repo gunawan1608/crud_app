@@ -52,7 +52,7 @@ class UserController extends Controller
             'role_id' => $request->role_id
         ]);
         return redirect()->route('users.index')
-            ->with('success', 'User berhasil ditambahkan');
+    ->with('success', 'Pengguna berhasil ditambahkan!');
     }
 
     /**
@@ -102,7 +102,7 @@ class UserController extends Controller
         $user->update($data);
 
         return redirect()->route('users.index')
-            ->with('success', 'User berhasil diupdate');
+    ->with('success', 'Data pengguna berhasil diperbarui!');
     }
 
     /**
@@ -123,6 +123,6 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('users.index')
-            ->with('success', 'User berhasil dihapus');
+    ->with('success', 'Pengguna berhasil dihapus!');
     }
 }

@@ -66,7 +66,7 @@ class ArsipController extends Controller
             ]);
 
             return redirect()->route('arsip.index')
-                ->with('success', 'Arsip berhasil ditambahkan');
+                ->with('success', 'Arsip berhasil diupload!');
         }
 
         return redirect()->back()->with('error', 'Gagal mengupload file');
@@ -146,7 +146,8 @@ class ArsipController extends Controller
 
             $arsip->update($data);
 
-            return redirect()->route('arsip.index')->with('success', 'Arsip berhasil diperbarui!');
+            return redirect()->route('arsip.index')
+                ->with('success', 'Arsip berhasil diperbarui!');
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
@@ -167,7 +168,8 @@ class ArsipController extends Controller
 
             $arsip->delete();
 
-            return redirect()->route('arsip.index')->with('success', 'Arsip berhasil dihapus!');
+            return redirect()->route('arsip.index')
+                ->with('success', 'Arsip berhasil dihapus!');
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
