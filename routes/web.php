@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminArsipController;
 use App\Http\Controllers\Admin\DivisiController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\ArsipController;
+use App\Http\Controllers\User\SuratTemplateController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,7 +48,20 @@ Route::middleware(['auth', 'is_user'])->group(function () {
     Route::resource('arsip', ArsipController::class);
     Route::get('arsip/{arsip}/download', [ArsipController::class, 'download'])
         ->name('arsip.download');
+
+    Route::get('/surat-templates', [SuratTemplateController::class, 'index'])->name('surat-templates.index');
+    Route::get('/surat-templates/{template}/view', [SuratTemplateController::class, 'view'])->name('surat-templates.view');
+    Route::get('/surat-templates/{template}/download', [SuratTemplateController::class, 'download'])->name('surat-templates.download');
 });
+
+  // Arsip user (list & detail)
+    Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
+    Route::get('/arsip/{arsip}', [ArsipController::class, 'show'])->name('arsip.show');
+
+    // 🔥 VIEW PDF (STREAM, BUKAN DOWNLOAD)
+    Route::get('/arsip/{arsip}/pdf', 
+        [ArsipController::class, 'viewPdf']
+    )->name('arsip.pdf');
 
 Route::get('/debug-upload', function () {
     return [

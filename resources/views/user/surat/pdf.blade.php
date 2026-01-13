@@ -29,13 +29,6 @@
                 <p class="text-blue-100 mt-1">
                     Akses dan lihat arsip resmi divisi Anda
                 </p>
-
-                <div class="mt-4">
-                    <a href="{{ route('surat-templates.index') }}"
-                       class="inline-flex items-center px-4 py-2 bg-white text-blue-700 rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-blue-50">
-                        Template Surat
-                    </a>
-                </div>
             </div>
 
             {{-- STATS --}}
@@ -65,20 +58,6 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <h3 class="text-lg font-semibold">Surat (Template PDF)</h3>
-                        <p class="text-sm text-gray-600 mt-1">Download surat siap pakai dan isi datanya secara dinamis.</p>
-                    </div>
-
-                    <a href="{{ route('surat-templates.index') }}"
-                       class="shrink-0 inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
-                        Buka
-                    </a>
-                </div>
-            </div>
-
             {{-- ARSIP TERBARU --}}
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <div class="flex justify-between items-center mb-4">
@@ -101,6 +80,13 @@
                                     <p class="text-xs text-gray-500">{{ $arsip->created_at->diffForHumans() }}</p>
                                 </div>
                             </div>
+
+                            {{-- 🔥 VIEW PDF --}}
+                            <a href="{{ route('arsip.pdf', $arsip->id) }}"
+                               target="_blank"
+                               class="ml-3 px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">
+                                Lihat PDF
+                            </a>
                         </div>
                     @empty
                         <div class="text-center text-gray-500 py-6">

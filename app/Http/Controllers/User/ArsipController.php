@@ -191,6 +191,28 @@ class ArsipController extends Controller
         return response()->download($filePath, $arsip->file_name);
     }
 
+    public function viewPdf(Arsip $arsip)
+    {
+        if ($arsip->divisi_id !== auth()->user()->divisi_id) {
+            abort(403, 'Anda tidak memiliki akses ke arsip ini.');
+        }
+
+        if (strtolower((string) $arsip->file_type) !== 'pdf') {
+            return back()->with('error', 'File ini bukan PDF.');
+        }
+
+        $filePath = storage_path('app/public/' . $arsip->file_path);
+
+        if (!file_exists($filePath)) {
+            return back()->with('error', 'File tidak ditemukan!');
+        }
+
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $arsip->file_name . '"',
+        ]);
+    }
+
     public function index(Request $request)
     {
         $query = Arsip::where('divisi_id', auth()->user()->divisi_id);
