@@ -2,16 +2,10 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $template['title'] }}</title>
     <style>
         @page {
-            margin: 25mm 25mm 25mm 25mm;
-            @bottom-right {
-                content: "Halaman " counter(page);
-                font-size: 9pt;
-                color: #666;
-            }
+            margin: 2.5cm 3cm 2.5cm 3cm;
         }
 
         * {
@@ -21,26 +15,24 @@
         }
 
         body {
-            font-family: 'DejaVu Sans', 'Times New Roman', serif;
-            font-size: 12pt;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt;
             color: #000;
             line-height: 1.6;
-        }   
+        }
 
         /* Header */
         .header {
             text-align: center;
             margin-bottom: 25px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #000;
         }
 
         .header-title {
-            font-size: 16pt;
+            font-size: 13pt;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 3px;
+            letter-spacing: 1.5px;
+            text-decoration: underline;
         }
 
         .nomor-surat {
@@ -49,154 +41,128 @@
             font-size: 11pt;
         }
 
-        /* Divider */
-        .divider {
-            border-top: 1px solid #000;
-            margin: 20px 0;
-        }
-
         /* Paragraphs */
         .paragraph {
             text-align: justify;
-            margin-bottom: 15px;
-            text-indent: 50px;
-        }
-
-        .paragraph-no-indent {
-            text-align: justify;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            line-height: 1.6;
         }
 
         /* Table */
         .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 18px 0;
         }
 
         .info-table td {
-            padding: 8px 0;
+            padding: 2px 0;
             vertical-align: top;
+            font-size: 11pt;
         }
 
         .info-table td.label {
-            width: 180px;
-            padding-right: 10px;
+            width: 100px;
+            padding-left: 0;
         }
 
         .info-table td.separator {
-            width: 20px;
+            width: 15px;
             text-align: center;
         }
 
         .info-table td.value {
-            font-weight: 600;
+            /* auto width */
         }
 
-        /* Task Box */
-        .task-box {
-            margin: 25px 0;
-            border: 2px solid #000;
-            padding: 0;
+        /* Task Section */
+        .task-section {
+            margin: 20px 0;
         }
 
-        .task-header {
-            background: #000;
-            color: #fff;
-            padding: 8px 15px;
+        .task-title {
             font-weight: 700;
+            margin-bottom: 8px;
             font-size: 11pt;
-            text-transform: uppercase;
-        }
-
-        .task-content {
-            padding: 15px;
+            text-decoration: underline;
         }
 
         .task-table {
             width: 100%;
             border-collapse: collapse;
+            margin: 10px 0;
         }
 
         .task-table td {
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
+            padding: 2px 0;
             vertical-align: top;
-        }
-
-        .task-table tr:last-child td {
-            border-bottom: none;
+            font-size: 11pt;
         }
 
         .task-table td.task-label {
-            width: 150px;
-            font-weight: 600;
-            padding-right: 10px;
+            width: 110px;
+            padding-left: 0;
         }
 
         .task-table td.task-separator {
-            width: 20px;
+            width: 15px;
             text-align: center;
         }
 
         .task-table td.task-value {
-            /* default styling */
+            /* auto width */
         }
 
-        /* Note Box */
-        .note-box {
+        /* Note */
+        .note-section {
             margin: 20px 0;
-            padding: 12px 15px;
-            border: 1px solid #000;
-            font-size: 11pt;
         }
 
         .note-title {
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-size: 11pt;
+            text-decoration: underline;
+        }
+
+        .note-content {
+            text-align: justify;
+            line-height: 1.6;
+            font-size: 11pt;
         }
 
         /* Signature */
         .signature-wrapper {
-            margin-top: 40px;
+            margin-top: 35px;
         }
 
         .signature-box {
             float: right;
-            width: 250px;
+            width: 200px;
             text-align: center;
         }
 
         .signature-place {
             text-align: right;
             margin-bottom: 5px;
+            font-size: 11pt;
         }
 
         .signature-title {
-            font-weight: 600;
+            font-weight: 400;
             margin-bottom: 5px;
+            font-size: 11pt;
         }
 
         .signature-space {
-            height: 70px;
+            height: 65px;
         }
 
         .signature-name {
             font-weight: 700;
             text-decoration: underline;
+            font-size: 11pt;
         }
-
-        /* Utilities */
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .text-justify { text-align: justify; }
-        .font-bold { font-weight: 700; }
-        .mb-10 { margin-bottom: 10px; }
-        .mb-15 { margin-bottom: 15px; }
-        .mb-20 { margin-bottom: 20px; }
-        .mt-20 { margin-top: 20px; }
-        .mt-30 { margin-top: 30px; }
-        .mt-40 { margin-top: 40px; }
 
         .clearfix::after {
             content: "";
@@ -216,10 +182,8 @@
         Nomor: <strong>{{ $nomor_surat }}</strong>
     </div>
 
-    <div class="divider"></div>
-
     <!-- Pembukaan -->
-    <p class="paragraph-no-indent mb-20">
+    <p class="paragraph">
         Dengan ini memberikan tugas kepada:
     </p>
 
@@ -243,41 +207,41 @@
     </table>
 
     <!-- Detail Tugas -->
-    <div class="task-box">
-        <div class="task-header">Rincian Tugas</div>
-        <div class="task-content">
-            <table class="task-table">
-                <tr>
-                    <td class="task-label">Tujuan Tugas</td>
-                    <td class="task-separator">:</td>
-                    <td class="task-value">{{ $tujuan !== '' ? $tujuan : '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="task-label">Lokasi</td>
-                    <td class="task-separator">:</td>
-                    <td class="task-value">{{ $lokasi !== '' ? $lokasi : '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="task-label">Periode Tugas</td>
-                    <td class="task-separator">:</td>
-                    <td class="task-value">
-                        {{ $tanggal_mulai !== '' ? $tanggal_mulai : '-' }}
-                        s/d
-                        {{ $tanggal_selesai !== '' ? $tanggal_selesai : '-' }}
-                    </td>
-                </tr>
-            </table>
-        </div>
+    <div class="task-section">
+        <div class="task-title">RINCIAN TUGAS:</div>
+        <table class="task-table">
+            <tr>
+                <td class="task-label">Tujuan Tugas</td>
+                <td class="task-separator">:</td>
+                <td class="task-value">{{ $tujuan !== '' ? $tujuan : '-' }}</td>
+            </tr>
+            <tr>
+                <td class="task-label">Lokasi</td>
+                <td class="task-separator">:</td>
+                <td class="task-value">{{ $lokasi !== '' ? $lokasi : '-' }}</td>
+            </tr>
+            <tr>
+                <td class="task-label">Periode Tugas</td>
+                <td class="task-separator">:</td>
+                <td class="task-value">
+                    {{ $tanggal_mulai !== '' ? $tanggal_mulai : '-' }}
+                    s/d
+                    {{ $tanggal_selesai !== '' ? $tanggal_selesai : '-' }}
+                </td>
+            </tr>
+        </table>
     </div>
 
     <!-- Note -->
-    <div class="note-box">
+    <div class="note-section">
         <div class="note-title">CATATAN:</div>
-        <div>Yang bersangkutan wajib melaksanakan tugas ini dengan penuh tanggung jawab dan melaporkan hasilnya kepada atasan langsung.</div>
+        <div class="note-content">
+            Yang bersangkutan wajib melaksanakan tugas ini dengan penuh tanggung jawab dan melaporkan hasilnya kepada atasan langsung.
+        </div>
     </div>
 
     <!-- Penutup -->
-    <p class="paragraph mt-20">
+    <p class="paragraph">
         Demikian surat tugas ini dibuat untuk dilaksanakan dengan sebaik-baiknya dan penuh tanggung jawab.
     </p>
 
@@ -285,9 +249,9 @@
     <div class="signature-wrapper clearfix">
         <div class="signature-box">
             <div class="signature-place">{{ $tanggal }}</div>
-            <div class="signature-title">{{ $penandatangan_jabatan !== '' ? $penandatangan_jabatan : 'Penandatangan' }}</div>
+            <div class="signature-title">{{ $penandatangan_jabatan !== '' ? $penandatangan_jabatan : 'Manager' }}</div>
             <div class="signature-space"></div>
-            <div class="signature-name">{{ $penandatangan_nama !== '' ? $penandatangan_nama : '( ........................... )' }}</div>
+            <div class="signature-name">{{ $penandatangan_nama !== '' ? $penandatangan_nama : 'Fahri Gani' }}</div>
         </div>
     </div>
 </body>
