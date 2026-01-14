@@ -59,7 +59,7 @@ Route::middleware(['auth', 'is_user'])->group(function () {
     Route::get('/arsip/{arsip}', [ArsipController::class, 'show'])->name('arsip.show');
 
     // 🔥 VIEW PDF (STREAM, BUKAN DOWNLOAD)
-    Route::get('/arsip/{arsip}/pdf', 
+    Route::get('/arsip/{arsip}/pdf',
         [ArsipController::class, 'viewPdf']
     )->name('arsip.pdf');
 
